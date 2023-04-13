@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./TinderCards.css";
 import TinderCard from "react-tinder-card";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "./firebase";
 
 function TinderCards() {
   const [people, setPeople] = useState([
@@ -14,6 +16,15 @@ function TinderCards() {
     },
   ]);
 
+  useEffect(() => {
+    const cardRef = collection(db, "cards");
+    const unsubscribe = onSnapshot(cardRef, (snapshot) => {
+      setPeople(snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() })));
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="tinderCards">
       <h1> A Card</h1>
@@ -21,14 +32,14 @@ function TinderCards() {
         {people.map((person) => (
           <TinderCard
             className="tinderCards__swipe"
-            key={person.name}
+            key={person.data?.name}
             preventSwipe={["up", "down"]}
           >
             <div
-              style={{ backgroundImage: `url(${person.url})` }}
+              style={{ backgroundImage: `url(${person.data?.url})` }}
               className="tinderCards__card"
             >
-              <h3>{person.name}</h3>
+              <h3>{person.data?.name}</h3>
             </div>
           </TinderCard>
         ))}
