@@ -16,6 +16,7 @@ function App() {
         {/* Individual Chat Screen  */}
         <Header />
         <Routes>
+          <Route path="/chat" element={[]} />
           <Route path="/" element={[<TinderCards />, <SwipeButtons />]} />
         </Routes>
       </div>
